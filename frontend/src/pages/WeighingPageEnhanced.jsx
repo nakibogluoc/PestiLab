@@ -249,7 +249,7 @@ export default function WeighingPageEnhanced({ user }) {
                     <div>
                       <p className="text-gray-600">Current Stock:</p>
                       <p className="font-semibold">
-                        {selectedCompound.stock_value.toFixed(2)} {selectedCompound.stock_unit}
+                        {toFixedSafe(selectedCompound.stock_value, 2)} {selectedCompound.stock_unit}
                       </p>
                     </div>
                   </div>
