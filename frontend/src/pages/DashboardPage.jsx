@@ -4,6 +4,7 @@ import { API } from '@/App';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FlaskConical, Scale, Tag, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { toFixedSafe, pctSafe } from '@/utils/number';
 
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState(null);
