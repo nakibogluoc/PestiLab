@@ -268,7 +268,7 @@ export default function WeighingPageEnhanced({ user }) {
                   />
                 </div>
                 <div className=\"space-y-2\">
-                  <Label>Temperature (\u00b0C)</Label>
+                  <Label>Temperature (°C)</Label>
                   <Input
                     type=\"number\"
                     step=\"0.1\"
