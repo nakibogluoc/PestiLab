@@ -327,10 +327,10 @@ export default function CompoundsPage({ user }) {
                       <td className="font-mono text-sm">{compound.cas_number}</td>
                       <td className="text-sm">{compound.solvent}</td>
                       <td className={compound.stock_value <= compound.critical_value ? 'critical-stock' : ''}>
-                        {compound.stock_value.toFixed(2)} {compound.stock_unit}
+                        {toFixedSafe(compound.stock_value, 2)} {compound.stock_unit}
                       </td>
                       <td className="text-sm text-gray-600">
-                        {compound.critical_value.toFixed(2)} {compound.critical_unit}
+                        {toFixedSafe(compound.critical_value, 2)} {compound.critical_unit}
                       </td>
                       <td>
                         <div className="flex gap-2">
