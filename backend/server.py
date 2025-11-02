@@ -165,6 +165,10 @@ class Usage(BaseModel):
     remaining_stock: float
     remaining_stock_unit: str
     prepared_by: str
+    mix_code: Optional[str] = None
+    mix_code_show: bool = True
+    label_code_used: Optional[str] = None
+    label_code_source: str = "auto"
     created_at: str = Field(default_factory=lambda: datetime.now(ISTANBUL_TZ).isoformat())
 
 class Label(BaseModel):
