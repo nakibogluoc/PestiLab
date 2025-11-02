@@ -170,50 +170,50 @@ export default function WeighingPageEnhanced({ user }) {
   const canCreate = user?.role !== 'readonly';
 
   return (
-    <div className=\"p-8\" data-testid=\"weighing-page\">
-      <div className=\"max-w-5xl mx-auto space-y-6\">
+    <div className="p-8" data-testid="weighing-page">
+      <div className="max-w-5xl mx-auto space-y-6">
         <div>
-          <h1 className=\"text-4xl font-bold text-gray-800 mb-2\">Weighing & Analytical Calculation</h1>
-          <p className=\"text-gray-600\">Temperature-corrected solvent density and precise concentration calculation</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Weighing & Analytical Calculation</h1>
+          <p className="text-gray-600">Temperature-corrected solvent density and precise concentration calculation</p>
         </div>
 
-        <Card className=\"shadow-soft\">
+        <Card className="shadow-soft">
           <CardHeader>
-            <CardTitle className=\"flex items-center gap-2\">
-              <Scale className=\"w-5 h-5 text-green-600\" />
+            <CardTitle className="flex items-center gap-2">
+              <Scale className="w-5 h-5 text-green-600" />
               New Weighing Record
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className=\"space-y-6\">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Compound Selection */}
-              <div className=\"space-y-2\">
+              <div className="space-y-2">
                 <Label>Select Compound (searchable by name or CAS)</Label>
                 <Popover open={open} onOpenChange={setOpen}>
                   <PopoverTrigger asChild>
                     <Button
-                      variant=\"outline\"
-                      role=\"combobox\"
+                      variant="outline"
+                      role="combobox"
                       aria-expanded={open}
-                      className=\"w-full justify-between\"
+                      className="w-full justify-between"
                       disabled={!canCreate}
-                      data-testid=\"weighing-compound-select\"
+                      data-testid="weighing-compound-select"
                     >
                       {selectedCompound 
                         ? `${selectedCompound.name} (${selectedCompound.cas_number})`
-                        : \"Select a compound...\"}
-                      <ChevronsUpDown className=\"ml-2 h-4 w-4 shrink-0 opacity-50\" />
+                        : "Select a compound..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className=\"w-full p-0\">
+                  <PopoverContent className="w-full p-0">
                     <Command>
                       <CommandInput 
-                        placeholder=\"Search by name or CAS...\" 
+                        placeholder="Search by name or CAS..." 
                         value={searchValue}
                         onValueChange={setSearchValue}
                       />
                       <CommandEmpty>No compound found.</CommandEmpty>
-                      <CommandGroup className=\"max-h-64 overflow-auto\">
+                      <CommandGroup className="max-h-64 overflow-auto">
                         {filteredCompounds.map((compound) => (
                           <CommandItem
                             key={compound.id}
@@ -222,13 +222,13 @@ export default function WeighingPageEnhanced({ user }) {
                           >
                             <Check
                               className={cn(
-                                \"mr-2 h-4 w-4\",
-                                selectedCompound?.id === compound.id ? \"opacity-100\" : \"opacity-0\"
+                                "mr-2 h-4 w-4",
+                                selectedCompound?.id === compound.id ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            <div className=\"flex flex-col\">
-                              <span className=\"font-medium\">{compound.name}</span>
-                              <span className=\"text-xs text-gray-500\">CAS: {compound.cas_number}</span>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{compound.name}</span>
+                              <span className="text-xs text-gray-500">CAS: {compound.cas_number}</span>
                             </div>
                           </CommandItem>
                         ))}
@@ -239,15 +239,15 @@ export default function WeighingPageEnhanced({ user }) {
               </div>
 
               {selectedCompound && (
-                <div className=\"p-4 bg-gray-50 rounded-lg space-y-2\">
-                  <div className=\"grid grid-cols-2 gap-4 text-sm\">
+                <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className=\"text-gray-600\">CAS Number:</p>
-                      <p className=\"font-mono font-medium\">{selectedCompound.cas_number}</p>
+                      <p className="text-gray-600">CAS Number:</p>
+                      <p className="font-mono font-medium">{selectedCompound.cas_number}</p>
                     </div>
                     <div>
-                      <p className=\"text-gray-600\">Current Stock:</p>
-                      <p className=\"font-semibold\">
+                      <p className="text-gray-600">Current Stock:</p>
+                      <p className="font-semibold">
                         {selectedCompound.stock_value.toFixed(2)} {selectedCompound.stock_unit}
                       </p>
                     </div>
@@ -256,95 +256,95 @@ export default function WeighingPageEnhanced({ user }) {
               )}
 
               {/* Solvent and Temperature */}
-              <div className=\"grid grid-cols-3 gap-4\">
-                <div className=\"space-y-2\">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
                   <Label>Solvent (auto-filled)</Label>
                   <Input
-                    placeholder=\"e.g. Acetone\"
+                    placeholder="e.g. Acetone"
                     value={solvent}
                     onChange={(e) => setSolvent(e.target.value)}
                     disabled={!canCreate}
-                    data-testid=\"weighing-solvent-input\"
+                    data-testid="weighing-solvent-input"
                   />
                 </div>
-                <div className=\"space-y-2\">
+                <div className="space-y-2">
                   <Label>Temperature (°C)</Label>
                   <Input
-                    type=\"number\"
-                    step=\"0.1\"
-                    placeholder=\"25.0\"
+                    type="number"
+                    step="0.1"
+                    placeholder="25.0"
                     value={temperature}
                     onChange={(e) => setTemperature(e.target.value)}
                     disabled={!canCreate}
-                    data-testid=\"weighing-temperature-input\"
+                    data-testid="weighing-temperature-input"
                   />
                 </div>
-                <div className=\"space-y-2\">
+                <div className="space-y-2">
                   <Label>Solvent Density ρ(T) (g/mL)</Label>
                   <Input
-                    type=\"number\"
+                    type="number"
                     value={solventDensity}
                     readOnly
-                    className=\"bg-gray-100\"
-                    data-testid=\"weighing-density-display\"
+                    className="bg-gray-100"
+                    data-testid="weighing-density-display"
                   />
                 </div>
               </div>
 
               {/* Weighing Inputs */}
-              <div className=\"grid grid-cols-2 gap-4\">
-                <div className=\"space-y-2\">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label>Weighed Amount (mg)</Label>
                   <Input
-                    type=\"number\"
-                    step=\"0.001\"
-                    placeholder=\"e.g. 12.5\"
+                    type="number"
+                    step="0.001"
+                    placeholder="e.g. 12.5"
                     value={weighedAmount}
                     onChange={(e) => setWeighedAmount(e.target.value)}
                     required
                     disabled={!canCreate}
-                    data-testid=\"weighing-amount-input\"
+                    data-testid="weighing-amount-input"
                   />
                 </div>
-                <div className=\"space-y-2\">
+                <div className="space-y-2">
                   <Label>Purity (%)</Label>
                   <Input
-                    type=\"number\"
-                    step=\"0.1\"
-                    placeholder=\"100.0\"
+                    type="number"
+                    step="0.1"
+                    placeholder="100.0"
                     value={purity}
                     onChange={(e) => setPurity(e.target.value)}
                     required
                     disabled={!canCreate}
-                    data-testid=\"weighing-purity-input\"
+                    data-testid="weighing-purity-input"
                   />
                 </div>
               </div>
 
               {/* Target Concentration */}
-              <div className=\"grid grid-cols-2 gap-4\">
-                <div className=\"space-y-2\">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label>Target Concentration (ppm)</Label>
                   <Input
-                    type=\"number\"
-                    step=\"0.001\"
-                    placeholder=\"e.g. 1000\"
+                    type="number"
+                    step="0.001"
+                    placeholder="e.g. 1000"
                     value={targetConcentration}
                     onChange={(e) => setTargetConcentration(e.target.value)}
                     required
                     disabled={!canCreate}
-                    data-testid=\"weighing-target-concentration-input\"
+                    data-testid="weighing-target-concentration-input"
                   />
                 </div>
-                <div className=\"space-y-2\">
+                <div className="space-y-2">
                   <Label>Concentration Mode</Label>
                   <Select value={concentrationMode} onValueChange={setConcentrationMode} disabled={!canCreate}>
-                    <SelectTrigger data-testid=\"weighing-concentration-mode-select\">
+                    <SelectTrigger data-testid="weighing-concentration-mode-select">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value=\"mg/L\">mg/L (w/v)</SelectItem>
-                      <SelectItem value=\"mg/kg\">mg/kg (w/w)</SelectItem>
+                      <SelectItem value="mg/L">mg/L (w/v)</SelectItem>
+                      <SelectItem value="mg/kg">mg/kg (w/w)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -352,31 +352,31 @@ export default function WeighingPageEnhanced({ user }) {
 
               {/* Calculated Results */}
               {requiredVolume && (
-                <div className=\"p-4 bg-green-50 border border-green-200 rounded-lg\">
-                  <h3 className=\"font-semibold text-green-800 mb-3\">Calculated Results</h3>
-                  <div className=\"grid grid-cols-2 gap-4 text-sm\">
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <h3 className="font-semibold text-green-800 mb-3">Calculated Results</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className=\"text-gray-600\">Required Volume:</p>
-                      <p className=\"text-xl font-bold text-green-700\">{requiredVolume} mL</p>
+                      <p className="text-gray-600">Required Volume:</p>
+                      <p className="text-xl font-bold text-green-700">{requiredVolume} mL</p>
                     </div>
                     <div>
-                      <p className=\"text-gray-600\">Required Solvent Mass:</p>
-                      <p className=\"text-xl font-bold text-green-700\">{requiredMass} g</p>
+                      <p className="text-gray-600">Required Solvent Mass:</p>
+                      <p className="text-xl font-bold text-green-700">{requiredMass} g</p>
                     </div>
                     <div>
-                      <p className=\"text-gray-600\">Actual Concentration:</p>
-                      <p className=\"text-lg font-semibold\">{actualConcentration} ppm</p>
+                      <p className="text-gray-600">Actual Concentration:</p>
+                      <p className="text-lg font-semibold">{actualConcentration} ppm</p>
                     </div>
                     <div>
-                      <p className=\"text-gray-600\">Deviation:</p>
+                      <p className="text-gray-600">Deviation:</p>
                       <p className={`text-lg font-semibold ${Math.abs(parseFloat(deviation)) > 1 ? 'text-red-600' : 'text-green-600'}`}>
                         {deviation}%
                       </p>
                     </div>
                   </div>
                   {Math.abs(parseFloat(deviation)) > 1 && (
-                    <div className=\"mt-3 flex items-center gap-2 text-sm text-orange-600\">
-                      <AlertCircle className=\"w-4 h-4\" />
+                    <div className="mt-3 flex items-center gap-2 text-sm text-orange-600">
+                      <AlertCircle className="w-4 h-4" />
                       <span>Deviation exceeds 1% - verify calculations</span>
                     </div>
                   )}
@@ -384,16 +384,16 @@ export default function WeighingPageEnhanced({ user }) {
               )}
 
               <Button 
-                type=\"submit\" 
-                className=\"w-full bg-green-600 hover:bg-green-700 py-6 text-lg font-semibold\"
+                type="submit" 
+                className="w-full bg-green-600 hover:bg-green-700 py-6 text-lg font-semibold"
                 disabled={loading || !canCreate || !requiredVolume}
-                data-testid=\"weighing-submit-button\"
+                data-testid="weighing-submit-button"
               >
                 {loading ? (
                   'Processing...'
                 ) : (
-                  <span className=\"flex items-center justify-center gap-2\">
-                    <Beaker className=\"w-5 h-5\" />
+                  <span className="flex items-center justify-center gap-2">
+                    <Beaker className="w-5 h-5" />
                     Save Calculation & Generate Label
                   </span>
                 )}
@@ -405,39 +405,39 @@ export default function WeighingPageEnhanced({ user }) {
         {/* Label Preview Dialog */}
         {result && (
           <Dialog open={showLabelDialog} onOpenChange={setShowLabelDialog}>
-            <DialogContent className=\"max-w-3xl\" data-testid=\"label-dialog\">
+            <DialogContent className="max-w-3xl" data-testid="label-dialog">
               <DialogHeader>
-                <DialogTitle className=\"flex items-center gap-2\">
-                  <QrCode className=\"w-5 h-5 text-green-600\" />
+                <DialogTitle className="flex items-center gap-2">
+                  <QrCode className="w-5 h-5 text-green-600" />
                   Label Generated Successfully
                 </DialogTitle>
               </DialogHeader>
-              <div className=\"space-y-6\">
+              <div className="space-y-6">
                 {/* Calculation Summary */}
-                <div className=\"p-4 bg-green-50 border border-green-200 rounded-lg\">
-                  <h3 className=\"font-semibold text-green-800 mb-3\">Calculation Summary</h3>
-                  <div className=\"grid grid-cols-3 gap-4 text-sm\">
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <h3 className="font-semibold text-green-800 mb-3">Calculation Summary</h3>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className=\"text-gray-600\">Actual Concentration:</p>
-                      <p className=\"text-xl font-bold text-green-700\">
+                      <p className="text-gray-600">Actual Concentration:</p>
+                      <p className="text-xl font-bold text-green-700">
                         {result.usage.actual_concentration.toFixed(3)} ppm
                       </p>
                     </div>
                     <div>
-                      <p className=\"text-gray-600\">Required Volume:</p>
-                      <p className=\"text-lg font-semibold\">
+                      <p className="text-gray-600">Required Volume:</p>
+                      <p className="text-lg font-semibold">
                         {result.usage.required_volume.toFixed(3)} mL
                       </p>
                     </div>
                     <div>
-                      <p className=\"text-gray-600\">Label Code:</p>
-                      <p className=\"text-lg font-mono font-bold text-blue-600\">{result.label.label_code}</p>
+                      <p className="text-gray-600">Label Code:</p>
+                      <p className="text-lg font-mono font-bold text-blue-600">{result.label.label_code}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Label Preview */}
-                <div className=\"border-2 border-gray-300 rounded-lg p-6\" style={{
+                <div className="border-2 border-gray-300 rounded-lg p-6" style={{
                   width: '70mm',
                   height: '25mm',
                   margin: '0 auto',
@@ -447,49 +447,49 @@ export default function WeighingPageEnhanced({ user }) {
                   background: 'white'
                 }}>
                   <div>
-                    <p className=\"font-bold text-xs uppercase\" style={{ fontSize: '8pt' }}>
+                    <p className="font-bold text-xs uppercase" style={{ fontSize: '8pt' }}>
                       {result.label.compound_name}
                     </p>
-                    <p className=\"text-xs\" style={{ fontSize: '6pt' }}>
+                    <p className="text-xs" style={{ fontSize: '6pt' }}>
                       CAS: {result.label.cas_number} • Conc.: {result.label.concentration}
                     </p>
-                    <p className=\"text-xs\" style={{ fontSize: '6pt' }}>
+                    <p className="text-xs" style={{ fontSize: '6pt' }}>
                       Date: {result.label.date} • Prepared by: {result.label.prepared_by}
                     </p>
                   </div>
-                  <div className=\"flex items-end justify-between\">
-                    <p className=\"font-mono font-bold text-xs\" style={{ fontSize: '7pt' }}>
+                  <div className="flex items-end justify-between">
+                    <p className="font-mono font-bold text-xs" style={{ fontSize: '7pt' }}>
                       Code: {result.label.label_code}
                     </p>
-                    <div className=\"flex gap-2\">
+                    <div className="flex gap-2">
                       <img 
                         src={`data:image/png;base64,${result.qr_code}`} 
-                        alt=\"QR Code\" 
-                        className=\"w-12 h-12\"
+                        alt="QR Code" 
+                        className="w-12 h-12"
                       />
                       <img 
                         src={`data:image/png;base64,${result.barcode}`} 
-                        alt=\"Barcode\" 
-                        className=\"h-12\"
+                        alt="Barcode" 
+                        className="h-12"
                         style={{ width: 'auto' }}
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className=\"flex gap-3\">
+                <div className="flex gap-3">
                   <Button 
-                    className=\"flex-1 bg-blue-600 hover:bg-blue-700\"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
                     onClick={() => window.print()}
-                    data-testid=\"print-label-button\"
+                    data-testid="print-label-button"
                   >
                     Print Label
                   </Button>
                   <Button 
-                    variant=\"outline\" 
-                    className=\"flex-1\"
+                    variant="outline" 
+                    className="flex-1"
                     onClick={() => setShowLabelDialog(false)}
-                    data-testid=\"close-label-dialog\"
+                    data-testid="close-label-dialog"
                   >
                     Close
                   </Button>
