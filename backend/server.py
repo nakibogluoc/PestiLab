@@ -138,6 +138,11 @@ class WeighingInput(BaseModel):
     concentration_mode: str = "mg/L"  # "mg/L" or "mg/kg"
     temperature_c: float = 25.0
     solvent: Optional[str] = None
+    prepared_by: str  # Manually editable
+    mix_code: Optional[str] = None  # Optional mix code
+    mix_code_show: bool = True  # Show mix code on label
+    label_code: Optional[str] = None  # Manual override of label code
+    label_code_source: str = "auto"  # "auto", "excel", or "manual"
 
 class Usage(BaseModel):
     model_config = ConfigDict(extra="ignore")
