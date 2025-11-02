@@ -1451,7 +1451,22 @@ async def export_labels_pdf(
         labels = await db.labels.find(query, {'_id': 0}).sort('created_at', -1).to_list(1000)
         
         if not labels:
-            raise HTTPException(status_code=404, detail="No labels found")
+            # Return empty PDF with message instead of error
+            pdf_buffer = BytesIO()
+            c = canvas.Canvas(pdf_buffer, pagesize=A4)
+            c.setFont("Helvetica", 12)
+            c.drawString(100, 750, "No labels found matching the criteria.")
+            c.save()
+            pdf_buffer.seek(0)
+            
+            timestamp = datetime.now(ISTANBUL_TZ).strftime("%Y%m%d_%H%M")
+            filename = f"Labels_{timestamp}.pdf"
+            
+            return StreamingResponse(
+                pdf_buffer,
+                media_type="application/pdf",
+                headers={"Content-Disposition": f"attachment; filename={filename}"}
+            )
         
         # Create merged PDF using reportlab
         pdf_buffer = BytesIO()
