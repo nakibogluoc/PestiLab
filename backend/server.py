@@ -231,6 +231,65 @@ def normalize_string(s: str) -> str:
         return ""
     return ' '.join(str(s).strip().upper().split())
 
+def normalize_for_search(text: str) -> str:
+    """
+    Normalize text for fuzzy search with Turkish locale support.
+    Removes spaces, hyphens, parentheses, commas and converts to lowercase.
+    """
+    if not text:
+        return ""
+    
+    # Turkish character mapping for search
+    char_map = {
+        'İ': 'i', 'I': 'i', 'ı': 'i',
+        'Ğ': 'g', 'ğ': 'g',
+        'Ş': 's', 'ş': 's',
+        'Ç': 'c', 'ç': 'c',
+        'Ö': 'o', 'ö': 'o',
+        'Ü': 'u', 'ü': 'u'
+    }
+    
+    text = text.lower()
+    for turkish_char, latin_char in char_map.items():
+        text = text.replace(turkish_char.lower(), latin_char)
+    
+    # Remove special characters and spaces
+    text = re.sub(r'[\s\-\(\),]', '', text)
+    
+    return text
+
+def calculate_search_score(query: str, compound_name: str, cas_number: str) -> int:
+    """
+    Calculate search score for compound matching.
+    Higher score means better match.
+    """
+    score = 0
+    query_norm = normalize_for_search(query)
+    name_norm = normalize_for_search(compound_name)
+    cas_norm = normalize_for_search(cas_number)
+    
+    # Exact matches get highest score
+    if query_norm == name_norm or query_norm == cas_norm:
+        score += 100
+    
+    # Substring matches
+    if query_norm in name_norm:
+        score += 50
+    if query_norm in cas_norm:
+        score += 50
+    
+    # Prefix matches
+    if name_norm.startswith(query_norm):
+        score += 30
+    if cas_norm.startswith(query_norm):
+        score += 30
+    
+    # Length bonus for shorter matches (more specific)
+    if len(query_norm) > 2:
+        score += min(len(query_norm), 10)
+    
+    return score
+
 def calculate_solvent_density(solvent_name: str, temperature_c: float) -> float:
     """
     Calculate solvent density at given temperature using thermal expansion.
