@@ -368,14 +368,32 @@ export default function RecordsPage() {
             <Card className="shadow-soft">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Labels ({labels.length})</CardTitle>
-                <Button
-                  onClick={handleExportLabels}
-                  className="bg-green-600 hover:bg-green-700"
-                  data-testid="export-labels-button"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export CSV
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleExportLabelsPDF}
+                    className="bg-red-600 hover:bg-red-700"
+                    data-testid="export-labels-pdf-button"
+                  >
+                    <FileImage className="w-4 h-4 mr-2" />
+                    Export PDF
+                  </Button>
+                  <Button
+                    onClick={handleExportLabelsDOCX}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    data-testid="export-labels-docx-button"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Export Word
+                  </Button>
+                  <Button
+                    onClick={handleExportLabelsDOCXZip}
+                    variant="outline"
+                    data-testid="export-labels-zip-button"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export ZIP
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
