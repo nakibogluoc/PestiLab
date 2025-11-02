@@ -46,6 +46,12 @@ export default function WeighingPageEnhanced({ user }) {
 
   useEffect(() => {
     fetchCompounds();
+    // Set default prepared by to current user
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setPreparedBy(user.username || '');
+    }
   }, []);
 
   useEffect(() => {
