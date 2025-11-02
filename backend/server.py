@@ -262,31 +262,56 @@ def calculate_search_score(query: str, compound_name: str, cas_number: str) -> i
     """
     Calculate search score for compound matching.
     Higher score means better match.
+    Optimized for short queries (2-3 characters).
     """
     score = 0
     query_norm = normalize_for_search(query)
     name_norm = normalize_for_search(compound_name)
     cas_norm = normalize_for_search(cas_number)
     
+    query_lower = query.lower()
+    name_lower = compound_name.lower()
+    cas_lower = cas_number.lower()
+    
     # Exact matches get highest score
     if query_norm == name_norm or query_norm == cas_norm:
         score += 100
     
+    # Exact case-insensitive matches (before normalization)
+    if query_lower == name_lower or query_lower == cas_lower:
+        score += 95
+    
+    # Prefix matches (very important for short queries)
+    if name_norm.startswith(query_norm):
+        score += 60
+    if cas_norm.startswith(query_norm):
+        score += 60
+    
+    # Word boundary prefix matches
+    words = name_lower.split()
+    for word in words:
+        if word.startswith(query_lower):
+            score += 50
+    
     # Substring matches
     if query_norm in name_norm:
-        score += 50
+        score += 40
     if query_norm in cas_norm:
-        score += 50
+        score += 40
     
-    # Prefix matches
-    if name_norm.startswith(query_norm):
-        score += 30
-    if cas_norm.startswith(query_norm):
-        score += 30
+    # Case-insensitive substring
+    if query_lower in name_lower:
+        score += 35
+    if query_lower in cas_lower:
+        score += 35
     
     # Length bonus for shorter matches (more specific)
-    if len(query_norm) > 2:
-        score += min(len(query_norm), 10)
+    if len(query_norm) >= 2:
+        score += min(len(query_norm) * 2, 20)
+    
+    # Penalty for very long compound names when query is short
+    if len(query_norm) < 4 and len(name_norm) > 20:
+        score -= 5
     
     return score
 
