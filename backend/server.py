@@ -1150,12 +1150,43 @@ async def get_usages(
     compound_id: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
-    query = {}
-    if compound_id:
-        query['compound_id'] = compound_id
-    
-    usages = await db.usages.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
-    return [Usage(**u) for u in usages]
+    """
+    Get usage records with defensive error handling.
+    Returns empty list on any error to prevent UI crashes.
+    """
+    try:
+        query = {}
+        if compound_id:
+            query['compound_id'] = compound_id
+        
+        usages = await db.usages.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+        return [Usage(**u) for u in usages]
+    except Exception as e:
+        logger.error(f"Error fetching usages: {str(e)}")
+        return []
+
+@api_router.get("/weighings")
+async def get_weighings(
+    limit: int = Query(default=100, le=1000),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get weighing records with metadata envelope.
+    Returns consistent JSON structure for frontend.
+    """
+    try:
+        usages = await db.usages.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+        total = await db.usages.count_documents({})
+        
+        return {
+            "status": "success",
+            "data": usages,
+            "total": total,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error fetching weighings: {str(e)}")
+        raise HTTPException(status_code=500, detail={"error": "list_failed", "detail": str(e)})
 
 @api_router.get("/labels", response_model=List[Label])
 async def get_labels(current_user: User = Depends(get_current_user)):
