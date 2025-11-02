@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CompoundsPage from "@/pages/CompoundsPage";
-import WeighingPage from "@/pages/WeighingPage";
+import WeighingPageEnhanced from "@/pages/WeighingPageEnhanced";
 import RecordsPage from "@/pages/RecordsPage";
 import Layout from "@/components/Layout";
 
