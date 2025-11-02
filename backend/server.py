@@ -1015,7 +1015,7 @@ async def get_usages(
 @api_router.get("/labels", response_model=List[Label])
 async def get_labels(current_user: User = Depends(get_current_user)):
     labels = await db.labels.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
-    return [Label(**l) for l in labels]
+    return [Label(**label_data) for label_data in labels]
 
 @api_router.get("/labels/{label_id}")
 async def get_label_with_codes(label_id: str, current_user: User = Depends(get_current_user)):
