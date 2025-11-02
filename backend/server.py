@@ -222,6 +222,42 @@ def normalize_string(s: str) -> str:
         return ""
     return ' '.join(str(s).strip().upper().split())
 
+def calculate_solvent_density(solvent_name: str, temperature_c: float) -> float:
+    """
+    Calculate solvent density at given temperature using thermal expansion.
+    Formula: ρ(T) = ρ20 × (1 - β × (T - 20))
+    """
+    # Default densities at 20°C (g/mL)
+    density_20 = {
+        "Acetonitrile": 0.783,
+        "Methanol": 0.791,
+        "Water": 0.998,
+        "Toluene": 0.867,
+        "Isopropanol": 0.785,
+        "Ethyl Acetate": 0.902,
+        "Acetone": 0.791,
+        "Hexane": 0.661,
+        "Cyclohexane": 0.779,
+        "Dichloromethane": 1.326,
+        "Chloroform": 1.489,
+        "DMSO": 1.100,
+        "N,N-Dimethylformamide": 0.948,
+        "Iso Propanol": 0.785,
+        "Heptane": 0.684,
+        "Ethanol": 0.789
+    }
+    
+    # Thermal expansion coefficient (1/°C)
+    beta = 0.001
+    
+    # Get base density
+    rho_20 = density_20.get(solvent_name, 0.800)  # Default to 0.800 if not found
+    
+    # Calculate density at temperature T
+    rho_T = rho_20 * (1 - beta * (temperature_c - 20))
+    
+    return round(rho_T, 4)
+
 def normalize_compound_name(name: str) -> str:
     """Normalize compound name to generate code prefix (first 3 Latin letters)"""
     # Turkish character mapping
