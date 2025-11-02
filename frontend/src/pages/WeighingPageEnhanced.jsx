@@ -187,6 +187,8 @@ export default function WeighingPageEnhanced({ user }) {
       setRequiredMass('');
       setActualConcentration('');
       setDeviation('');
+      setMixCode('');
+      setLabelCode('');
       
       fetchCompounds();
     } catch (error) {
@@ -195,11 +197,6 @@ export default function WeighingPageEnhanced({ user }) {
       setLoading(false);
     }
   };
-
-  const filteredCompounds = compounds.filter(c => 
-    c.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-    c.cas_number.toLowerCase().includes(searchValue.toLowerCase())
-  );
 
   const canCreate = user?.role !== 'readonly';
 
