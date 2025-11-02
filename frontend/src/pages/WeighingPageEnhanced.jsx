@@ -76,10 +76,10 @@ export default function WeighingPageEnhanced({ user }) {
   };
 
   const calculateResults = () => {
-    const weighed = parseFloat(weighedAmount);
-    const pur = parseFloat(purity);
-    const target = parseFloat(targetConcentration);
-    const density = parseFloat(solventDensity);
+    const weighed = parseNumeric(weighedAmount);
+    const pur = parseNumeric(purity);
+    const target = parseNumeric(targetConcentration);
+    const density = parseNumeric(solventDensity);
 
     if (!weighed || !pur || !target || !density) return;
 
