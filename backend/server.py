@@ -1373,6 +1373,15 @@ async def export_weighings_excel(
         row_count = 0
         ws = None
         
+        # Handle empty results
+        if not usages:
+            ws = wb.create_sheet("Weighing Records")
+            ws.append(HEADERS)
+            for cell in ws[1]:
+                cell.font = Font(bold=True)
+                cell.alignment = Alignment(horizontal='center')
+            ws.append(["No weighing records found matching the criteria."])
+        
         for idx, usage in enumerate(usages):
             # Create new sheet if needed
             if row_count == 0 or row_count >= EXCEL_MAX_ROWS - 1:
