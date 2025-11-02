@@ -256,7 +256,7 @@ export default function WeighingPageEnhanced({ user }) {
                           : "No compound found"}
                       </CommandEmpty>
                       <CommandGroup className="max-h-64 overflow-auto">
-                        {filteredCompounds.map((compound) => (
+                        {compounds.map((compound) => (
                           <CommandItem
                             key={compound.id}
                             value={compound.id}
