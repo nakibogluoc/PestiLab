@@ -197,18 +197,18 @@ export default function RecordsPage() {
                             </td>
                             <td className="font-medium">{usage.compound_name}</td>
                             <td className="font-mono text-sm">{usage.cas_number}</td>
-                            <td>{usage.weighed_amount?.toFixed(2) || '-'}</td>
-                            <td>{usage.purity?.toFixed(1) || '-'}%</td>
-                            <td>{usage.target_concentration?.toFixed(2) || '-'}</td>
-                            <td>{usage.required_volume?.toFixed(3) || '-'}</td>
+                            <td>{toFixedSafe(usage.weighed_amount, 2)}</td>
+                            <td>{toFixedSafe(usage.purity, 1)}%</td>
+                            <td>{toFixedSafe(usage.target_concentration, 2)}</td>
+                            <td>{toFixedSafe(usage.required_volume, 3)}</td>
                             <td className="font-semibold text-green-600">
-                              {usage.actual_concentration?.toFixed(3) || '-'}
+                              {toFixedSafe(usage.actual_concentration, 3)}
                             </td>
                             <td className={Math.abs(usage.deviation || 0) > 1 ? 'text-red-600' : 'text-green-600'}>
-                              {usage.deviation?.toFixed(2) || '-'}%
+                              {pctSafe(usage.deviation, 2)}
                             </td>
-                            <td>{usage.temperature_c?.toFixed(1) || '-'}</td>
-                            <td>{usage.solvent_density?.toFixed(4) || '-'}</td>
+                            <td>{toFixedSafe(usage.temperature_c, 1)}</td>
+                            <td>{toFixedSafe(usage.solvent_density, 4)}</td>
                             <td>{usage.prepared_by}</td>
                           </tr>
                         ))
