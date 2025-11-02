@@ -779,50 +779,62 @@ async def create_weighing(
     if not compound:
         raise HTTPException(status_code=404, detail="Compound not found")
     
-    # Convert to mg and mL
-    weighed_mg = weighing_data.weighed_amount
-    if weighing_data.weighed_unit == "g":
-        weighed_mg = weighing_data.weighed_amount * 1000
-    elif weighing_data.weighed_unit == "µg":
-        weighed_mg = weighing_data.weighed_amount / 1000
-    
-    volume_mL = weighing_data.prepared_volume
-    if weighing_data.volume_unit == "L":
-        volume_mL = weighing_data.prepared_volume * 1000
-    elif weighing_data.volume_unit == "µL":
-        volume_mL = weighing_data.prepared_volume / 1000
-    
-    # Get solvent density at temperature
-    solvent_name = weighing_data.solvent or compound['solvent']
+    # Extract inputs
+    weighed_mg = weighing_data.weighed_amount  # Already in mg
+    purity_percent = weighing_data.purity
+    target_concentration = weighing_data.target_concentration  # mg/L or mg/kg
+    concentration_mode = weighing_data.concentration_mode
     temperature = weighing_data.temperature_c
+    solvent_name = weighing_data.solvent or compound['solvent']
     
-    density_data = await db.solvent_densities.find(
-        {"solvent_name": solvent_name},
-        {"_id": 0}
-    ).to_list(100)
+    # Calculate actual mass (corrected for purity)
+    actual_mass_mg = weighed_mg * (purity_percent / 100.0)
     
-    if density_data:
-        solvent_density, is_extrapolated = interpolate_density(temperature, density_data)
-    else:
-        solvent_density = 0.8  # Default
-        is_extrapolated = False
+    # Calculate solvent density at temperature
+    solvent_density = calculate_solvent_density(solvent_name, temperature)
     
-    # Calculate concentration (mg/mL)
-    concentration = weighed_mg / volume_mL
+    # Analytical calculations
+    if concentration_mode == "mg/L":
+        # w/v mode: C = m/V → V = m/C
+        # target_concentration is mg/L, actual_mass_mg is mg
+        # V_required (mL) = actual_mass_mg / (target_concentration_mg/L / 1000)
+        required_volume_mL = actual_mass_mg / (target_concentration / 1000.0)
+        
+        # Solvent mass = volume × density
+        required_solvent_mass_g = required_volume_mL * solvent_density
+        
+        # Actual concentration (ppm = mg/L)
+        actual_concentration_ppm = (actual_mass_mg / required_volume_mL) * 1000.0
+        
+    else:  # mg/kg mode (w/w)
+        # C_target = m_solute / m_total
+        # m_solute (g) = actual_mass_mg / 1000
+        # C_target_fraction = target_concentration / 10^6 (mg/kg to g/g)
+        # m_total = m_solute / C_target_fraction
+        # m_solvent = m_total - m_solute
+        
+        actual_mass_g = actual_mass_mg / 1000.0
+        c_target_fraction = target_concentration / 1_000_000.0
+        total_mass_g = actual_mass_g / c_target_fraction
+        required_solvent_mass_g = total_mass_g - actual_mass_g
+        
+        # Convert to volume
+        required_volume_mL = required_solvent_mass_g / solvent_density
+        
+        # Actual concentration (ppm = mg/kg)
+        actual_concentration_ppm = (actual_mass_g / total_mass_g) * 1_000_000.0
     
-    # Determine display unit
-    if concentration < 1:
-        display_concentration = concentration * 1000
-        concentration_unit = "µg/mL"
-    else:
-        display_concentration = concentration
-        concentration_unit = "mg/mL"
+    # Calculate deviation
+    deviation_percent = ((actual_concentration_ppm - target_concentration) / target_concentration) * 100.0
     
-    # Round to 3 decimal places
-    display_concentration = round(display_concentration, 3)
+    # Round results to 3 decimals
+    required_volume_mL = round(required_volume_mL, 3)
+    required_solvent_mass_g = round(required_solvent_mass_g, 3)
+    actual_concentration_ppm = round(actual_concentration_ppm, 3)
+    deviation_percent = round(deviation_percent, 2)
     solvent_density = round(solvent_density, 4)
     
-    # Update stock
+    # Update stock (subtract actual used mass)
     new_stock = compound['stock_value'] - weighed_mg
     await db.compounds.update_one(
         {"id": weighing_data.compound_id},
@@ -846,11 +858,14 @@ async def create_weighing(
         compound_name=compound['name'],
         cas_number=compound['cas_number'],
         weighed_amount=weighed_mg,
-        weighed_unit="mg",
-        prepared_volume=volume_mL,
-        volume_unit="mL",
-        concentration=display_concentration,
-        concentration_unit=concentration_unit,
+        purity=purity_percent,
+        actual_mass=round(actual_mass_mg, 3),
+        target_concentration=target_concentration,
+        concentration_mode=concentration_mode,
+        required_volume=required_volume_mL,
+        required_solvent_mass=required_solvent_mass_g,
+        actual_concentration=actual_concentration_ppm,
+        deviation=deviation_percent,
         solvent=solvent_name,
         temperature_c=temperature,
         solvent_density=solvent_density,
@@ -863,7 +878,7 @@ async def create_weighing(
     
     # Generate QR and barcode
     date_str = datetime.now(ISTANBUL_TZ).strftime("%Y-%m-%d")
-    qr_data = f"LBL|code={label_code}|name={compound['name']}|cas={compound['cas_number']}|c={display_concentration} {concentration_unit}|dt={date_str}|by={current_user.username}"
+    qr_data = f"LBL|code={label_code}|name={compound['name']}|cas={compound['cas_number']}|c={actual_concentration_ppm} ppm|dt={date_str}|by={current_user.username}"
     
     qr_base64 = generate_qr_code(qr_data)
     barcode_base64 = generate_barcode(label_code)
@@ -875,7 +890,7 @@ async def create_weighing(
         label_code=label_code,
         compound_name=compound['name'],
         cas_number=compound['cas_number'],
-        concentration=f"{display_concentration} {concentration_unit}",
+        concentration=f"{actual_concentration_ppm} ppm",
         prepared_by=current_user.username,
         date=date_str,
         qr_data=qr_data
@@ -898,8 +913,7 @@ async def create_weighing(
         "usage": usage.model_dump(),
         "label": label.model_dump(),
         "qr_code": qr_base64,
-        "barcode": barcode_base64,
-        "density_extrapolated": is_extrapolated
+        "barcode": barcode_base64
     }
 
 # === USAGE & LABEL ROUTES ===
