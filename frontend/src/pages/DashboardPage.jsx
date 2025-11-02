@@ -160,9 +160,11 @@ export default function DashboardPage() {
                     {dashboardData.recent_usages.map((usage) => (
                       <tr key={usage.id} data-testid={`recent-usage-${usage.id}`}>
                         <td className="font-medium">{usage.compound_name}</td>
-                        <td>{usage.weighed_amount.toFixed(2)} {usage.weighed_unit}</td>
+                        <td>
+                          {toFixedSafe(usage.weighed_amount, 2)} mg
+                        </td>
                         <td className="font-semibold text-green-600">
-                          {usage.concentration.toFixed(3)} {usage.concentration_unit}
+                          {toFixedSafe(usage.actual_concentration, 3)} ppm
                         </td>
                         <td>{usage.prepared_by}</td>
                         <td className="text-sm text-gray-600">
