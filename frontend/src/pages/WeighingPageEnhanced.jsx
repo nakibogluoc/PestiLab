@@ -421,13 +421,13 @@ export default function WeighingPageEnhanced({ user }) {
                     <div>
                       <p className="text-gray-600">Actual Concentration:</p>
                       <p className="text-xl font-bold text-green-700">
-                        {result.usage.actual_concentration.toFixed(3)} ppm
+                        {toFixedSafe(result.usage.actual_concentration, 3)} ppm
                       </p>
                     </div>
                     <div>
                       <p className="text-gray-600">Required Volume:</p>
                       <p className="text-lg font-semibold">
-                        {result.usage.required_volume.toFixed(3)} mL
+                        {toFixedSafe(result.usage.required_volume, 3)} mL
                       </p>
                     </div>
                     <div>
