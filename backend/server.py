@@ -1242,6 +1242,20 @@ async def initialize_defaults():
         await db.users.insert_one(doc)
         logger.info("Admin user created: username=admin, password=admin123")
     
+    # Create test account
+    test_user_exists = await db.users.find_one({"username": "pestical"})
+    if not test_user_exists:
+        hashed_password = bcrypt.hashpw("aceta135410207".encode('utf-8'), bcrypt.gensalt())
+        test_user = User(
+            username="pestical",
+            email="pestical@pestilab.com",
+            role="analyst"
+        )
+        doc = test_user.model_dump()
+        doc['password'] = hashed_password.decode('utf-8')
+        await db.users.insert_one(doc)
+        logger.info("Test user created: username=pestical, password=aceta135410207")
+    
     # Initialize default solvent densities
     density_count = await db.solvent_densities.count_documents({})
     if density_count == 0:
