@@ -384,6 +384,79 @@ export default function WeighingPageEnhanced({ user }) {
                 </div>
               </div>
 
+              {/* Prepared By */}
+              <div className="space-y-2">
+                <Label>Prepared By</Label>
+                <Input
+                  type="text"
+                  placeholder="Enter name"
+                  value={preparedBy}
+                  onChange={(e) => setPreparedBy(e.target.value)}
+                  required
+                  disabled={!canCreate}
+                  data-testid="weighing-prepared-by-input"
+                />
+              </div>
+
+              {/* Mix Code with Toggle */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 space-y-2">
+                  <Label>Mix Code (Optional)</Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g. MIX-2025-001"
+                    value={mixCode}
+                    onChange={(e) => setMixCode(e.target.value)}
+                    disabled={!canCreate}
+                    data-testid="weighing-mix-code-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Show on Label</Label>
+                  <Select value={showMixCode ? "yes" : "no"} onValueChange={(val) => setShowMixCode(val === "yes")} disabled={!canCreate}>
+                    <SelectTrigger data-testid="weighing-mix-code-toggle">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Label Code Override */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 space-y-2">
+                  <Label>Label Code (Leave blank for auto-generation)</Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g. IMI-0001"
+                    value={labelCode}
+                    onChange={(e) => {
+                      setLabelCode(e.target.value);
+                      if (e.target.value) {
+                        setLabelCodeSource('manual');
+                      } else {
+                        setLabelCodeSource('auto');
+                      }
+                    }}
+                    disabled={!canCreate}
+                    data-testid="weighing-label-code-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Source</Label>
+                  <Input
+                    type="text"
+                    value={labelCodeSource === 'manual' ? 'Manual' : 'Auto'}
+                    readOnly
+                    className="bg-gray-100"
+                    data-testid="weighing-label-code-source"
+                  />
+                </div>
+              </div>
+
               {/* Calculated Results */}
               {requiredVolume && (
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
